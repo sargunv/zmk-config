@@ -1,0 +1,4 @@
+[tools]
+pipx = "latest"
+"pipx:zmk" = "latest"
+python = "latest"
