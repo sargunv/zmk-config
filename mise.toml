@@ -1,27 +1,42 @@
 # External dependencies not managed by mise:
 #   brew install dtc
 
+[tool_alias]
+zephyr-sdk = "github:zephyrproject-rtos/sdk-ng"
+zephyr-sdk-arm = "github:zephyrproject-rtos/sdk-ng"
+
 [tools]
 uv = "0.10.7"
 cmake = "3.31.11"
 ninja = "1.13.2"
 
-[tools."github:zephyrproject-rtos/sdk-ng"]
+[tools.zephyr-sdk]
 version = "0.16.8"
 strip_components = 0
 
-[tools."github:zephyrproject-rtos/sdk-ng".platforms]
-macos-arm64 = { asset_pattern = "zephyr-sdk-*_macos-aarch64.tar.xz" }
-macos-x64 = { asset_pattern = "zephyr-sdk-*_macos-x86_64.tar.xz" }
-linux-arm64 = { asset_pattern = "zephyr-sdk-*_linux-aarch64.tar.xz" }
-linux-x64 = { asset_pattern = "zephyr-sdk-*_linux-x86_64.tar.xz" }
+[tools.zephyr-sdk.platforms]
+macos-arm64 = { asset_pattern = "zephyr-sdk-*_macos-aarch64_minimal.tar.xz" }
+macos-x64 = { asset_pattern = "zephyr-sdk-*_macos-x86_64_minimal.tar.xz" }
+linux-arm64 = { asset_pattern = "zephyr-sdk-*_linux-aarch64_minimal.tar.xz" }
+linux-x64 = { asset_pattern = "zephyr-sdk-*_linux-x86_64_minimal.tar.xz" }
+
+[tools.zephyr-sdk-arm]
+version = "0.16.8"
+strip_components = 0
+
+[tools.zephyr-sdk-arm.platforms]
+macos-arm64 = { asset_pattern = "toolchain_macos-aarch64_arm-zephyr-eabi.tar.xz" }
+macos-x64 = { asset_pattern = "toolchain_macos-x86_64_arm-zephyr-eabi.tar.xz" }
+linux-arm64 = { asset_pattern = "toolchain_linux-aarch64_arm-zephyr-eabi.tar.xz" }
+linux-x64 = { asset_pattern = "toolchain_linux-x86_64_arm-zephyr-eabi.tar.xz" }
 
 [env]
 ZEPHYR_BASE = "{{config_root}}/.zmk/zephyr"
-ZEPHYR_SDK_INSTALL_DIR = "{{env.HOME}}/.local/share/mise/installs/github-zephyrproject-rtos-sdk-ng/0.16.8/zephyr-sdk-0.16.8"
+ZEPHYR_SDK_INSTALL_DIR = "{{env.MISE_DATA_DIR | default(value=env.HOME ~ '/.local/share/mise')}}/installs/zephyr-sdk/0.16.8/zephyr-sdk-0.16.8"
 
 [hooks]
 postinstall = [
+  "ln -sfn $(mise where zephyr-sdk-arm)/arm-zephyr-eabi \"$ZEPHYR_SDK_INSTALL_DIR/arm-zephyr-eabi\"",
   "uv sync",
   "cd .zmk && west update",
   "cmake -P $ZEPHYR_BASE/share/zephyr-package/cmake/zephyr_export.cmake",
