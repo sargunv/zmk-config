@@ -3,4 +3,23 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - lily58-left
+          - lily58-right
+          - corne-left
+          - corne-right
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y device-tree-compiler
+      - uses: jdx/mise-action@v3
+        with:
+          cache: true
+          experimental: true
+      - run: mise run build:${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: .zmk/build/*/zephyr/zmk.uf2

@@ -38,6 +38,7 @@ ZEPHYR_SDK_INSTALL_DIR = "{{env.MISE_DATA_DIR | default(value=env.HOME ~ '/.loca
 postinstall = [
   "ln -sfn $(mise where zephyr-sdk-arm)/arm-zephyr-eabi \"$ZEPHYR_SDK_INSTALL_DIR/arm-zephyr-eabi\"",
   "uv sync",
+  "test -d .zmk/.west || (mkdir -p .zmk/config && ln -sfn \"$PWD/config/west.yml\" .zmk/config/west.yml && west init -l .zmk/config)",
   "cd .zmk && west update",
   "cmake -P $ZEPHYR_BASE/share/zephyr-package/cmake/zephyr_export.cmake",
 ]
