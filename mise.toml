@@ -1,4 +1,93 @@
+# External dependencies not managed by mise:
+#   brew install dtc
+
 [tools]
-pipx = "latest"
-"pipx:zmk" = "latest"
-python = "latest"
+uv = "0.10.7"
+cmake = "3.31.11"
+ninja = "1.13.2"
+
+[tools."github:zephyrproject-rtos/sdk-ng"]
+version = "0.16.8"
+strip_components = 0
+
+[tools."github:zephyrproject-rtos/sdk-ng".platforms]
+macos-arm64 = { asset_pattern = "zephyr-sdk-*_macos-aarch64.tar.xz" }
+macos-x64 = { asset_pattern = "zephyr-sdk-*_macos-x86_64.tar.xz" }
+linux-arm64 = { asset_pattern = "zephyr-sdk-*_linux-aarch64.tar.xz" }
+linux-x64 = { asset_pattern = "zephyr-sdk-*_linux-x86_64.tar.xz" }
+
+[env]
+ZEPHYR_BASE = "{{config_root}}/.zmk/zephyr"
+ZEPHYR_SDK_INSTALL_DIR = "{{env.HOME}}/.local/share/mise/installs/github-zephyrproject-rtos-sdk-ng/0.16.8/zephyr-sdk-0.16.8"
+
+[hooks]
+postinstall = [
+  "uv sync",
+  "cd .zmk && west update",
+  "cmake -P $ZEPHYR_BASE/share/zephyr-package/cmake/zephyr_export.cmake",
+]
+
+[task_templates.build]
+dir = "{{config_root}}/.zmk"
+run = 'west build -s zmk/app -b nice_nano_v2 -d build/$ZMK_BUILD_NAME -- -DSHIELD="$ZMK_SHIELD" $ZMK_SNIPPET -DZMK_CONFIG=$PWD/../config'
+
+[task_templates.flash]
+run = '''
+#!/usr/bin/env bash
+uf2="{{config_root}}/.zmk/build/$ZMK_BUILD_NAME/zephyr/zmk.uf2"
+volume="/Volumes/NICENANO"
+if [ ! -d "$volume" ]; then
+  echo "NICENANO drive not found. Double-tap the reset button on the nice!nano."
+  echo "Waiting for $volume to appear..."
+  while [ ! -d "$volume" ]; do sleep 0.5; done
+fi
+echo "Copying $uf2 to $volume..."
+cp "$uf2" "$volume/"
+echo "Done! The board will reboot automatically."
+'''
+
+[tasks.clean]
+description = "Remove all build directories"
+dir = "{{config_root}}/.zmk"
+run = "rm -rf build"
+
+[tasks."build:lily58-left"]
+extends = "build"
+env = { ZMK_BUILD_NAME = "lily58_left", ZMK_SHIELD = "lily58_left", ZMK_SNIPPET = "-DSNIPPET=studio-rpc-usb-uart" }
+
+[tasks."build:lily58-right"]
+extends = "build"
+env = { ZMK_BUILD_NAME = "lily58_right", ZMK_SHIELD = "lily58_right", ZMK_SNIPPET = "" }
+
+[tasks."build:corne-left"]
+extends = "build"
+env = { ZMK_BUILD_NAME = "corne_left", ZMK_SHIELD = "corne_left nice_view_adapter nice_view", ZMK_SNIPPET = "-DSNIPPET=studio-rpc-usb-uart" }
+
+[tasks."build:corne-right"]
+extends = "build"
+env = { ZMK_BUILD_NAME = "corne_right", ZMK_SHIELD = "corne_right nice_view_adapter nice_view", ZMK_SNIPPET = "" }
+
+[tasks."flash:lily58-left"]
+extends = "flash"
+depends = ["build:lily58-left"]
+env = { ZMK_BUILD_NAME = "lily58_left" }
+
+[tasks."flash:lily58-right"]
+extends = "flash"
+depends = ["build:lily58-right"]
+env = { ZMK_BUILD_NAME = "lily58_right" }
+
+[tasks."flash:corne-left"]
+extends = "flash"
+depends = ["build:corne-left"]
+env = { ZMK_BUILD_NAME = "corne_left" }
+
+[tasks."flash:corne-right"]
+extends = "flash"
+depends = ["build:corne-right"]
+env = { ZMK_BUILD_NAME = "corne_right" }
+
+[settings]
+experimental = true
+pin = true
+python.uv_venv_auto = "create|source"
