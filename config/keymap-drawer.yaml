@@ -1,0 +1,5 @@
+draw_config:
+  n_columns: 2
+  key_w: 52
+  key_h: 48
+  outer_pad_h: 40
