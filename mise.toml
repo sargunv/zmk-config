@@ -67,6 +67,29 @@ description = "Remove all build directories"
 dir = "{{config_root}}/.zmk"
 run = "rm -rf build"
 
+[tasks."build:settings-reset"]
+description = "Build settings reset firmware"
+dir = "{{config_root}}/.zmk"
+run = 'west build -s zmk/app -b nice_nano_v2 -d build/settings_reset -- -DSHIELD=settings_reset'
+
+[tasks."flash:settings-reset"]
+description = "Flash settings reset firmware to clear stored settings"
+depends = ["build:settings-reset"]
+run = '''
+#!/usr/bin/env bash
+uf2="{{config_root}}/.zmk/build/settings_reset/zephyr/zmk.uf2"
+volume="/Volumes/NICENANO"
+if [ ! -d "$volume" ]; then
+  echo "NICENANO drive not found. Double-tap the reset button on the nice!nano."
+  echo "Waiting for $volume to appear..."
+  while [ ! -d "$volume" ]; do sleep 0.5; done
+fi
+echo "Copying $uf2 to $volume..."
+cp "$uf2" "$volume/"
+echo "Done! The board will reboot automatically."
+echo "Now double-tap reset again and flash your actual firmware."
+'''
+
 [tasks."build:lily58-left"]
 extends = "build"
 env = { ZMK_BUILD_NAME = "lily58_left", ZMK_SHIELD = "lily58_left", ZMK_SNIPPET = "-DSNIPPET=studio-rpc-usb-uart" }

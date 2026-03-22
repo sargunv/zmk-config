@@ -12,55 +12,72 @@
     keymap {
         compatible = "zmk,keymap";
 
-        default_layer {
+        macos_layer {
             // -----------------------------------------------------------------------------------------
-            // |  TAB |  Q  |  W  |  E  |  R  |  T  |   |  Y  |  U   |  I  |  O  |  P  | BSPC |
-            // | CTRL |  A  |  S  |  D  |  F  |  G  |   |  H  |  J   |  K  |  L  |  ;  |  '   |
-            // | SHFT |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  | ESC  |
-            //                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
+            // |  TAB |  B  |  L  |  D  |  C  |  V  |   |  J  |  Y  |  O  |  U  |  ,  | BSPC |
+            // |CT/ESC|  N  |  R  |  T  |  S  |  G  |   |  P  |  H  |  A  |  E  |  I  |  /   |
+            // | SHFT |  X  |  Q  |  M  |  W  |  Z  |   |  K  |  F  |  '  |  ;  |  .  | SHFT |
+            //                    | GUI | LWR | SPC |   | ENT | RSE | ALT |
 
             bindings = <
-&kp TAB     &kp B  &kp L  &kp D     &kp C  &kp V        &kp J    &kp Y  &kp O     &kp U     &kp COMMA  &kp BSPC
-&kp ESCAPE  &kp N  &kp R  &kp T     &kp S  &kp G        &kp P    &kp H  &kp A     &kp E     &kp I      &kp FSLH
-&kp LSHFT   &kp X  &kp Q  &kp M     &kp W  &kp Z        &kp K    &kp F  &kp SQT   &kp SEMI  &kp DOT    &kp RSHFT
-                          &kp LGUI  &mo 1  &kp SPACE    &kp RET  &mo 2  &kp RALT
+&kp TAB        &kp B  &kp L  &kp D     &kp C  &kp V        &kp J    &kp Y  &kp O    &kp U     &kp COMMA  &kp BSPC
+&mt LCTRL ESC  &kp N  &kp R  &kp T     &kp S  &kp G        &kp P    &kp H  &kp A    &kp E     &kp I      &kp FSLH
+&kp LSHFT      &kp X  &kp Q  &kp M     &kp W  &kp Z        &kp K    &kp F  &kp SQT  &kp SEMI  &kp DOT    &kp RSHFT
+                              &kp LGUI  &mo 2  &kp SPACE    &kp RET  &mo 3  &kp RALT
             >;
 
-            label = "macOS";
+            display-name = "macOS";
+        };
+
+        linux_layer {
+            // -----------------------------------------------------------------------------------------
+            // |  TAB |  B  |  L  |  D  |  C  |  V  |   |  J  |  Y  |  O  |  U  |  ,  | BSPC |
+            // |SU/ESC|  N  |  R  |  T  |  S  |  G  |   |  P  |  H  |  A  |  E  |  I  |  /   |
+            // | SHFT |  X  |  Q  |  M  |  W  |  Z  |   |  K  |  F  |  '  |  ;  |  .  | SHFT |
+            //                    | CTRL| LWR | SPC |   | ENT | RSE | ALT |
+
+            bindings = <
+&kp TAB       &kp B  &kp L  &kp D      &kp C  &kp V        &kp J    &kp Y  &kp O    &kp U     &kp COMMA  &kp BSPC
+&mt LGUI ESC  &kp N  &kp R  &kp T      &kp S  &kp G        &kp P    &kp H  &kp A    &kp E     &kp I      &kp FSLH
+&kp LSHFT     &kp X  &kp Q  &kp M      &kp W  &kp Z        &kp K    &kp F  &kp SQT  &kp SEMI  &kp DOT    &kp RSHFT
+                             &kp LCTRL  &mo 2  &kp SPACE    &kp RET  &mo 3  &kp RALT
+            >;
+
+            display-name = "Linux";
         };
 
         lower_layer {
             // -----------------------------------------------------------------------------------------
-            // |  TAB |  1  |  2  |  3  |  4  |  5  |   |  6  |  7  |  8  |  9  |  0  | BSPC |
-            // | BTCLR| BT1 | BT2 | BT3 | BT4 | BT5 |   | LFT | DWN |  UP | RGT |     |      |
-            // | SHFT |     |     |     |     |     |   |     |     |     |     |     |      |
-            //                    | GUI |     | SPC |   | ENT |     | ALT |
+            // |      |  1  |  2  |  3  |  4  |  5  |   |  6  |  7  |  8  |  9  |  0  | DEL  |
+            // |UNLCK |HOME |PG DN|PG UP| END |     |   |     |  ←  |  ↓  |  ↑  |  →  |      |
+            // |BTCLR |BT 1 |BT 2 |BT 3 |BT 4 |BT 5 |   |     |     |     | to0 | to1 |      |
+            //                    |     |     |     |   |     |     |     |
 
             bindings = <
-&kp TAB     &kp N1          &kp N2        &kp N3        &kp N4        &kp N5          &kp N6   &kp N7    &kp N8    &kp N9  &kp N0     &kp BSPC
-&bt BT_CLR  &bt BT_SEL 0    &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &trans   &kp LEFT  &kp DOWN  &kp UP  &kp RIGHT  &trans
-&kp LSHFT   &studio_unlock  &trans        &trans        &trans        &trans          &trans   &trans    &trans    &trans  &trans     &trans
-                                          &kp LCTRL     &trans        &kp SPACE       &kp RET  &trans    &kp RALT
+&trans          &kp N1        &kp N2        &kp N3        &kp N4        &kp N5          &kp N6  &kp N7    &kp N8    &kp N9  &kp N0     &kp DEL
+&studio_unlock  &kp HOME      &kp PG_DN     &kp PG_UP     &kp END       &trans          &trans  &kp LEFT  &kp DOWN  &kp UP  &kp RIGHT  &trans
+&bt BT_CLR      &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &trans  &trans    &trans    &to 0   &to 1      &trans
+                                             &trans        &trans        &trans          &trans  &trans    &trans
             >;
 
-            label = "Lower";
+            display-name = "Lower";
         };
 
         raise_layer {
             // -----------------------------------------------------------------------------------------
-            // |  TAB |  !  |  @  |  #  |  $  |  %  |   |  ^  |  &  |  *  |  (  |  )  | BSPC |
-            // | CTRL |     |     |     |     |     |   |  -  |  =  |  [  |  ]  |  \  |  `   |
-            // | SHFT |     |     |     |     |     |   |  _  |  +  |  {  |  }  | "|" |  ~   |
-            //                    | GUI |     | SPC |   | ENT |     | ALT |
+            // |      |  !  |  @  |  #  |  $  |  %  |   |  ^  |  &  |  *  |  (  |  )  | BSPC |
+            // |      | F1  | F2  | F3  | F4  | F5  |   |  -  |  =  |  [  |  ]  |  \  |  `   |
+            // |      | F6  | F7  | F8  | F9  | F10 |   |  _  |  +  |  {  |  }  |  |  |  ~   |
+            //                    |     |     |     |   |     |     |     |
 
             bindings = <
-&kp TAB    &kp EXCL  &kp AT  &kp HASH  &kp DLLR  &kp PRCNT    &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR  &kp BSPC
-&trans     &trans    &trans  &trans    &trans    &trans       &kp MINUS  &kp EQUAL  &kp LBKT   &kp RBKT  &kp BSLH  &kp GRAVE
-&kp LSHFT  &trans    &trans  &trans    &trans    &trans       &kp UNDER  &kp PLUS   &kp LBRC   &kp RBRC  &kp PIPE  &kp TILDE
-                             &kp LGUI  &trans    &kp SPACE    &kp RET    &trans     &kp RALT
+&trans  &kp EXCL  &kp AT  &kp HASH  &kp DLLR  &kp PRCNT    &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR  &kp BSPC
+&trans  &kp F1    &kp F2  &kp F3    &kp F4    &kp F5       &kp MINUS  &kp EQUAL  &kp LBKT   &kp RBKT  &kp BSLH  &kp GRAVE
+&trans  &kp F6    &kp F7  &kp F8    &kp F9    &kp F10      &kp UNDER  &kp PLUS   &kp LBRC   &kp RBRC  &kp PIPE  &kp TILDE
+                          &trans    &trans    &trans       &trans     &trans     &trans
             >;
 
-            label = "Raise";
+            display-name = "Raise";
         };
     };
 };
